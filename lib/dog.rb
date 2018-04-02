@@ -43,9 +43,10 @@ class Dog
   end
 
 
-  def self.create(attributes)
-      dog = Dog.new(name: attributes[:name], breed: attributes[:breed])
-      dog.save
+  def self.create(name: name, breed: breed)
+    dog = self.new(name: name, breed: breed)
+    dog.save
+    dog
   end
 
 
@@ -96,8 +97,13 @@ class Dog
   end
 
   def update
-    sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
-    DB[:conn].execute(sql, self.name, self.breed, self.id)
+    sql = <<-SQL
+      UPDATE dogs
+      SET name=?, breed=?
+      WHERE id=?
+      SQL
+
+      DB[:conn].execute(sql, self.name, self.breed, self.id)
   end
 
 
