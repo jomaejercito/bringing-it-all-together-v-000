@@ -44,14 +44,14 @@ class Dog
 
 
   def self.create(name: name, breed: breed)
-    dog = self.new(name: name, breed: breed)
+    dog = Dog.new(name: name, breed: breed)
     dog.save
     dog
   end
 
 
   def self.new_from_db(row)
-    dog = self.new(row[0], row[1], row[2])
+    dog = Dog.new(row[0], row[1], row[2])
     dog
   end
 
@@ -64,7 +64,7 @@ class Dog
     SQL
 
     row = DB[:conn].execute(sql, name)[0]
-    dog = self.new_from_db(row)
+    dog = Dog.new_from_db(row)
   end
 
 
@@ -76,7 +76,7 @@ class Dog
     SQL
 
     row = DB[:conn].execute(sql, id)[0][0]
-    dog = self.new_from_db(row)
+    dog = Dog.new_from_db(row)
   end
 
 
