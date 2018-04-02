@@ -57,11 +57,44 @@ class Dog
 
 
   def self.find_by_name(name)
-    sql = "SELECT * FROM dog WHERE name = ?"
-    result = DB[:conn].execute(sql, name)[0]
-    self.new(result[0], result[1], result[2])
+    sql = <<-SQL
+      SELECT *
+      FROM dogs
+      WHERE name = ?
+    SQL
+
+    row = DB[:conn].execute(sql, name)[0]
+    dog = self.new_from_db(row)
   end
 
+
+  def self.find_by_id(id)
+    sql = <<-SQL
+      SELECT *
+      FROM dogs
+      WHERE id = ?
+    SQL
+
+    row = DB[:conn].execute(sql, id)[0][0]
+    dog = self.new_from_db(row)
+  end
+
+
+  def self.find_or_create_by(name:, breed:)
+    sql = <<-SQL
+        SELECT *
+        FROM dogs
+        WHERE name=? AND breed=?
+        SQL
+
+    row = DB[:conn].execute(sql, name, breed).first
+    if row == nil
+      dog = self.create({name: name, breed: breed})
+    else
+      dog = self.new(name: row[1], breed: row[2], id: row[0])
+    end
+    dog
+  end
 
   def update
     sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
